@@ -30,3 +30,10 @@ These functions outsource the bulk of the plotting and training code present in 
 	    		 	 learning_rate
 
 	4. train_evaluate_model - function for training, evaluating and plotting graphs for any model general model (including custom models)
+		parameters - model - instance of model class,
+	    		 	 model_name - name to save plots and weights,
+	    		 	 num_epochs,
+	    		 	 learning_rate
+	    		 	 hidden_dim_1, hidden_dim_2, hidden_dim_3
+
+#### tune_model.py - performs Bayesian Hyperparameter optimization using the hyperopt library to optimize the hidden dimension sizes of the Autoencoder
