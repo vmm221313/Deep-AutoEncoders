@@ -219,3 +219,58 @@ def train_evaluate_default_model(model, model_name, num_epochs , learning_rate):
   return loss
 
 
+def train_evaluate_model(model, model_name, num_epochs, learning_rate, hidden_dim_1, hidden_dim_2, hidden_dim_3):
+  train_dl, valid_dl, train_x, train_y, test_x, test_y = load_data(batch_size = 256)
+  db = basic_data.DataBunch(train_dl, valid_dl)
+
+  loss_func = nn.MSELoss() 
+  bn_wd = False  # Don't use weight decay fpr batchnorm layers
+  true_wd = True  # wd will be used for all optimizers
+  wd = 1e-6
+  plots_path = 'plots/'+ model_name + '/' + str(hidden_dim_1) + '_' + str(hidden_dim_2) + '_' + str(hidden_dim_3) + '/'
+
+  if not os.path.exists(plots_path):
+    if not os.path.exists('plots/'+ model_name + '/'):
+      os.mkdir('plots/'+ model_name + '/')
+    os.mkdir(plots_path)
+
+  if not os.path.exists('results.csv'):
+    results_df = pd.DataFrame(columns=['model', 'num_epochs', 'learning_rate', 'hidden_dim_1', 'hidden_dim_2', 'hidden_dim_3', 'final_loss'])
+    results_df.to_csv('results.csv', index = False)
+
+  learn = basic_train.Learner(data=db, model=model, loss_func=loss_func, wd=wd, callback_fns=ActivationStats, bn_wd=bn_wd, true_wd=true_wd)
+
+  learn.fit(num_epochs, lr=learning_rate, wd=wd)
+  learn.save(model_name+str(hidden_dim_1) + '_' + str(hidden_dim_2) + '_' + str(hidden_dim_3))
+
+  loss = learn.validate()[0]
+
+  result = {'model': 'AE_3D_500cone_bn_custom',
+            'num_epochs': num_epochs,
+            'learning_rate': learning_rate, 
+            'hidden_dim_1': hidden_dim_1,
+            'hidden_dim_2': hidden_dim_2,
+            'hidden_dim_3': hidden_dim_3,
+            'final_loss': loss
+            }
+
+  results_df = pd.read_csv('results.csv')
+  results_df = results_df.append(result, ignore_index=True)
+  results_df.to_csv('results.csv', index = False)
+
+  loss_plot = learn.recorder.plot_losses(return_fig=True);
+  loss_plot.savefig(plots_path + 'loss_plot.png')
+
+  plt.plot(learn.recorder.val_losses, marker='>');
+  plt.savefig(plots_path + 'val_losses.png')
+
+  plot_activations(learn, save = plots_path);
+
+  plt.close('all')
+
+  current_save_folder = plots_path
+  make_plots(model, train_x, train_y, test_x, test_y, plots_path, model_name);
+
+  plt.close('all')
+
+  return loss
