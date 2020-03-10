@@ -11,7 +11,6 @@ import torch.nn as nn
 import torch.utils.data
 
 from torch.utils.data import TensorDataset
-from torch.utils.data import DataLoader
 
 import my_matplotlib_style as ms
 
@@ -22,9 +21,9 @@ from fastai import train as tr
 from nn_utils import get_data
 
 
-def load_data(batch_size):
-    train = pd.read_pickle('processed_data/all_jets_train_4D_100_percent.pkl')
-    test = pd.read_pickle('processed_data/all_jets_test_4D_100_percent.pkl')
+def load_data(train_path, test_path, batch_size):
+    train = pd.read_pickle(train_path)
+    test = pd.read_pickle(test_path)
     n_features = len(train.loc[0])
     
     train = (train - train.mean()) / train.std()
@@ -41,7 +40,7 @@ def load_data(batch_size):
     train_dl = DataLoader(train_ds, batch_size = batch_size, shuffle=True)
     valid_dl = DataLoader(valid_ds, batch_size = batch_size)
     
-    return train_dl, valid_dl
+    return train, test, train_ds, test_ds, train_dl, valid_dl
 
 
 # Functions for evaluation
