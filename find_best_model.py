@@ -55,7 +55,7 @@ for model_class in tqdm_notebook(models):
     best_model = model
     print(loss)
 
-print('Best Model -> {}'.format(str(best_model).split('.')[1].split("'")[0]))
+print('Best Model -> {}'.format(best_model)
 
 print('Min loss = {}'.format(min_loss))
 
