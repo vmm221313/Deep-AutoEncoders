@@ -165,14 +165,18 @@ mdl_MSE = np.zeros(n_config)
 mdl_KLD = np.zeros(n_config)
 mdl_MMD = np.zeros(n_config)
 
+best_loss = 10000
+best_dropout = 0
+best_lambd = 1
+
 for config in range(n_config):
     alpha = 0
     lambd = np.exp(np.random.uniform(0, np.log(1e5)))
     dropout = 0#0.9*np.random.uniform()
     dfac = 1./(1.-dropout)
 
-    nhidden = int(np.ceil(np.exp(np.random.uniform(np.log(dfac*mdl_ncode+1), np.log(dfac*2*nfeat)))))*50
-    nhidden2 = int(np.ceil(np.exp(np.random.uniform(np.log(dfac*mdl_ncode+1), np.log(nhidden)))))*50
+    nhidden = 200
+    nhidden2 = 200
     print('config %i, alpha = %0.1f, lambda = %0.1f, dropout = %0.2f; 2 hidden layers with %i, %i nodes' % (config, alpha, lambd, dropout, nhidden, nhidden2))
     model = InfoVAE(alpha=alpha, lambd=lambd, nfeat=nfeat, nhidden=nhidden, nhidden2=nhidden2, ncode=mdl_ncode, dropout=dropout)
     model.cuda()
@@ -180,11 +184,17 @@ for config in range(n_config):
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', verbose=True, patience=5)
     stopper = EarlyStopper(patience=10)
 
-    for epoch in tqdm((range(1, epochs + 1))):
+    for epoch in (range(1, epochs + 1)):
         valid_loss, valid_logL, valid_KLD, valid_MMD = train()
         if epoch % log_interval == 0:
             print('====> Epoch: {} VALIDATION Loss: {:.2e} logL: {:.2e} KL: {:.2e} MMD: {:.2e}'.format(
                   epoch, valid_loss, valid_logL, valid_KLD, valid_MMD))
+
+        if loss<best_loss:
+            best_loss = loss
+            best_dropout = dropout
+            best_lambd = lambd
+            print('##best params ##config %i, alpha = %0.1f, lambda = %0.1f, dropout = %0.2f; 2 hidden layers with %i, %i nodes' % (config, alpha, lambd, dropout, nhidden, nhidden2))
 
         scheduler.step(valid_loss)
         if (not stopper.step(valid_loss)) or (epoch == epochs):
@@ -199,4 +209,6 @@ for config in range(n_config):
             mdl_MMD[config] = model.MMD
             torch.save(model, tag+'/%04i.pth' % config)
             break
+
+
 
