@@ -7,20 +7,6 @@ from scipy import stats
 import corner.corner as corner
 import matplotlib.pyplot as plt
 
-logvar = torch.randn([1, 3])
-logvar
-
-mu = torch.randn([1, 3])
-mu
-
-std = torch.exp(0.5*logvar)
-std
-
-eps = torch.randn_like(std)
-eps
-
-eps.mul(std).add_(mu)
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
