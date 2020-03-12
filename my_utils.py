@@ -7,6 +7,20 @@ from scipy import stats
 import corner.corner as corner
 import matplotlib.pyplot as plt
 
+logvar = torch.randn([1, 3])
+logvar
+
+mu = torch.randn([1, 3])
+mu
+
+std = torch.exp(0.5*logvar)
+std
+
+eps = torch.randn_like(std)
+eps
+
+eps.mul(std).add_(mu)
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -37,6 +51,32 @@ def make_plots_dir(model_class):
     plots_path = 'plots/' + model_name + '/'
 
     return plots_path, model_name
+
+
+batch_size = 256
+
+# +
+train = pd.read_pickle('processed_data/all_jets_train_4D_100_percent.pkl')
+test = pd.read_pickle('processed_data/all_jets_test_4D_100_percent.pkl')
+n_features = len(train.loc[0])
+
+train = (train - train.mean()) / train.std()
+test = (test - test.mean()) / test.std()
+
+train_x = train
+test_x = test
+train_y = train_x  # y = x since we are building an AE (ideally the ouput should be the same as the input)
+test_y = test_x
+
+train_ds = TensorDataset(torch.tensor(train_x.values, dtype = torch.float), torch.tensor(train_y.values, dtype = torch.float))
+valid_ds = TensorDataset(torch.tensor(test_x.values, dtype = torch.float), torch.tensor(test_y.values, dtype = torch.float))
+
+train_dl = DataLoader(train_ds, batch_size = batch_size, shuffle=True)
+valid_dl = DataLoader(valid_ds, batch_size = batch_size)
+
+# -
+
+train_ds.tensors
 
 
 def load_data(batch_size):
@@ -245,7 +285,7 @@ def train_evaluate_model(model, model_name, num_epochs, learning_rate, hidden_di
 
   loss = learn.validate()[0]
 
-  result = {'model': 'AE_3D_500cone_bn_custom',
+  result = {'model': model_name,
             'num_epochs': num_epochs,
             'learning_rate': learning_rate, 
             'hidden_dim_1': hidden_dim_1,
