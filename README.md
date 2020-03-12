@@ -1,6 +1,6 @@
 # Deep-AutoEncoders
 
-This repository contains my implementation of Deep Autoencoders for ATLAS data compression. Some of the code is based on code from this repository - https://github.com/Skelpdar/HEPAutoencoders. The Variational Autoencoder code is based on the paper 'Dimensionality Reduction of SDSS Spectra with Variational Autoencoders' Portillo, Parejko, Vergara, and Connolly (2020). Many thanks to @Skelpdar,Portillo, Parejko, Vergara, and Connolly for their work.  
+This repository contains my implementation of Deep Autoencoders for ATLAS data compression. Some of the code is based on code from this repository - https://github.com/Skelpdar/HEPAutoencoders. The Variational Autoencoder code is based on the paper 'Dimensionality Reduction of SDSS Spectra with Variational Autoencoders' by Portillo, Parejko, Vergara, and Connolly (2020). Many thanks to @Skelpdar, Portillo, Parejko, Vergara, and Connolly for their work.  
 
 ### Pretrained versions of the following models are available in the 'models' directory.
 
