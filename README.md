@@ -1,8 +1,8 @@
 # Deep-AutoEncoders
 
-This repository contains my implementation of Deep Autoencoders for ATLAS data compression. Some of the code is based on code from this repository - https://github.com/Skelpdar/HEPAutoencoders. Many thanks to @Skelpdar for his work.
+This repository contains my implementation of Deep Autoencoders for ATLAS data compression. Some of the code is based on code from this repository - https://github.com/Skelpdar/HEPAutoencoders. The Variational Autoencoder code is based on the paper 'Dimensionality Reduction of SDSS Spectra with Variational Autoencoders' Portillo, Parejko, Vergara, and Connolly (2020). Many thanks to @Skelpdar,Portillo, Parejko, Vergara, and Connolly for their work.  
 
-### Pretrained versions of the following models are available in the 'models' directory
+### Pretrained versions of the following models are available in the 'models' directory.
 
 models = [AE_3D_100, AE_3D_200, AE_3D_small, AE_3D_small_v2, AE_big, AE_big_no_last_bias, AE_3D_50, 
           AE_3D_50_no_last_bias, AE_3D_50cone, AE_3D_500cone_bn, AE_big_2D_v1, AE_big_2D_v2, 
@@ -13,13 +13,17 @@ dropout_models = [AE_3D_50_bn_drop, AE_3D_50cone_bn_drop, AE_3D_100_bn_drop, AE_
                   AE_3D_200_bn_drop]
 
 ###### Of these models, AE_3D_200 performs best for 4D compression
+The plots evaluating the performance of all models can be found in the 'plots' directory.
 
 ### Scripts - (also find IPython notebooks with the same name that perform the same function but can be run on Google Colab)
 
 For running the IPython notebooks on Google Colab, simply clone this repository onto a folder and change the filepath. For running the Python scripts, clone the repository and run the scripts from within the directory. 
 
 ##### utils.py
-Contains util functions for loading/normalizing data
+Contains util functions for loading/normalizing data.
+
+##### nn_utils.py
+Contains the model classes for each of the standard models.
 
 ##### my_utils.py
 Contains new util functions I have defined to make model training and graph plotting more streamlined. 
