@@ -191,7 +191,7 @@ def make_plots(model, train_x, train_y, test_x, test_y, curr_save_folder, model_
   if save:
       fig_name = 'corner_3d.png'
       plt.savefig(curr_save_folder + fig_name)
-    
+
 
 def train_evaluate_default_model(model, model_name, num_epochs , learning_rate):
   train_dl, valid_dl, train_x, train_y, test_x, test_y = load_data(batch_size = 256)
