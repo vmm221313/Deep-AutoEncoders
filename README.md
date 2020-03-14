@@ -2,6 +2,10 @@
 
 This repository contains my implementation of Deep Autoencoders for ATLAS data compression. Some of the code is based on code from this repository - https://github.com/Skelpdar/HEPAutoencoders. The Variational Autoencoder code is based on the paper 'Dimensionality Reduction of SDSS Spectra with Variational Autoencoders' by Portillo, Parejko, Vergara, and Connolly (2020). Many thanks to @Skelpdar, Portillo, Parejko, Vergara, and Connolly for their work.  
 
+### Requirements - 
+Install the following 
+
+
 ### Pretrained versions of the following models are available in the 'models' directory.
 
 models = [AE_3D_100, AE_3D_200, AE_3D_small, AE_3D_small_v2, AE_big, AE_big_no_last_bias, AE_3D_50, 
@@ -15,7 +19,7 @@ dropout_models = [AE_3D_50_bn_drop, AE_3D_50cone_bn_drop, AE_3D_100_bn_drop, AE_
 ###### Of these models, AE_3D_200 performs best for 4D compression
 The plots evaluating the performance of all models can be found in the 'plots' directory.
 
-### Scripts - (also find IPython notebooks with the same name that perform the same function but can be run on Google Colab)
+### Scripts - (also find IPython notebooks with the same name that perform the same function but can be run locally as a Jupyter Notebook on Google Colab)
 
 For running the IPython notebooks on Google Colab, simply clone this repository onto a folder and change the filepath. For running the Python scripts, clone the repository and run the scripts from within the directory. 
 
@@ -50,6 +54,14 @@ These functions outsource the bulk of the plotting and training code present in 
 ##### tune_model.py
 Performs Bayesian Hyperparameter optimization using the hyperopt library to optimize the hidden dimension sizes of the Autoencoder
 
+##### relu_vs_tanh.py
+Script to compare ReLU and Tanh activation functions
+
+##### train_best_model.py
+Script to train the best model and produce plots
+
+##### vae.py
+Script to train Variational Autoencoders
 
 
 
