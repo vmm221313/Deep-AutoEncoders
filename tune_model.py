@@ -29,31 +29,45 @@ from utils import plot_activations
 if torch.cuda.is_available():
     fastai.torch_core.defaults.device = 'cuda'
 
-class AE_3D_200_custom(nn.Module):
+class AE_3D_500cone_bn_custom(nn.Module):
     def __init__(self, hidden_dim_1, hidden_dim_2, hidden_dim_3, n_features=4):
-        super(AE_3D_200_custom, self).__init__()
+        super(AE_3D_500cone_bn, self).__init__()
         self.en1 = nn.Linear(n_features, hidden_dim_1)
-        self.en2 = nn.Linear(hidden_dim_1, hidden_dim_2)
+        self.bn1 = nn.BatchNorm1d(hidden_dim_1)
+        self.en2 = nn.Linear(hidden_dim_1,  hidden_dim_2)
+        self.bn2 = nn.BatchNorm1d(hidden_dim_2)
         self.en3 = nn.Linear(hidden_dim_2, hidden_dim_3)
+        self.bn3 = nn.BatchNorm1d(hidden_dim_3)
         self.en4 = nn.Linear(hidden_dim_3, 3)
+        self.bn5 = nn.BatchNorm1d(3)
         self.de1 = nn.Linear(3, hidden_dim_3)
+        self.bn6 = nn.BatchNorm1d(hidden_dim_3)
         self.de2 = nn.Linear(hidden_dim_3, hidden_dim_2)
+        self.bn7 = nn.BatchNorm1d(hidden_dim_2)
         self.de3 = nn.Linear(hidden_dim_2, hidden_dim_1)
+        self.bn8 = nn.BatchNorm1d(hidden_dim_1)
         self.de4 = nn.Linear(hidden_dim_1, n_features)
-        self.relu = nn.ReLU()
+        self.tanh = nn.Tanh()
 
     def encode(self, x):
-        return self.en4(self.relu(self.en3(self.relu(self.en2(self.relu(self.en1(x)))))))
+        h1 = self.bn1(self.tanh(self.en1(x)))
+        h2 = self.bn2(self.tanh(self.en2(h1)))
+        h3 = self.bn3(self.tanh(self.en3(h2)))
+        z = self.en4(h3)
+        return z
 
     def decode(self, x):
-        return self.de4(self.relu(self.de3(self.relu(self.de2(self.relu(self.de1(self.relu(x))))))))
+        h5 = self.bn6(self.tanh(self.de1(self.bn5(self.tanh(x)))))
+        h6 = self.bn7(self.tanh(self.de2(h5)))
+        h7 = self.bn8(self.tanh(self.de3(h6)))
+        return self.de4(h7)
 
     def forward(self, x):
         z = self.encode(x)
         return self.decode(z)
 
     def describe(self):
-        return 'in-' + str(hidden_dim_1) + '-' + str(hidden_dim_2) + '-' + str(hidden_dim_3) + '-' +'3-' + str(hidden_dim_3) + '-' + str(hidden_dim_2) + '-' + str(hidden_dim_1) + '-out'
+        pass
 
 global best_loss
 best_loss = 10000
@@ -64,9 +78,9 @@ def gridSearch(space):
         hidden_dim_2 = int(space['hidden_dim_2'])
         hidden_dim_3 = int(space['hidden_dim_3'])
 
-        model = AE_3D_200_custom(hidden_dim_1, hidden_dim_2, hidden_dim_3)
-        model_name = 'AE_3D_200_custom'
-        num_epochs = 50
+        model = AE_3D_500cone_bn_custom(hidden_dim_1, hidden_dim_2, hidden_dim_3)
+        model_name = 'AE_3D_500cone_bn_custom'
+        num_epochs = 100
         learning_rate = 3e-4
         loss = train_evaluate_model(model, model_name, num_epochs, learning_rate, hidden_dim_1, hidden_dim_2, hidden_dim_3)
 
